@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: bcd-model-git
+  labels:
+    app: demo
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/hanvitha/breastcancer_detection
