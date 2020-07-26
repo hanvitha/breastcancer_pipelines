@@ -22,7 +22,7 @@ spec:
         default: '0'
       - name: S2I_SOURCE_NOTEBOOK_LIST
         description: "notebook names seperated by ,"
-        default: "01_chatbot_data_preparation.ipynb,02_chatbot_model.ipynb"
+        default: "image_processing_model.ipynb"
   outputs:
     resources:
       - name: image
