@@ -3,13 +3,23 @@ kind: Pipeline
 metadata:
   name: deploy-model-pipeline
   labels:
-    app: demo
+    app: cancerdetection
 spec:
   resources:
   - name: model-git
     type: git
   - name: model-image
     type: image
+  params:
+  - name: deployment-name
+    type: string
+    description: name of the deployment to be patched
+  - name: S2I_SOURCE_NOTEBOOK_LIST
+    type: string
+    description: name of the deployment to be patched
+  - name: BUILDER_IMAGE
+    description: The location of s2i base builder image
+    type: string
   tasks:
   - name: build-model
     taskRef:
@@ -18,9 +28,11 @@ spec:
       - name: TLSVERIFY
         value: "false"
       - name: BUILDER_IMAGE
-        value: quay.io/willbenton/simple-model-s2i:cached-pipeline-s2i
-      - name: S2I_SOURCE_NOTEBOOK_LIST
-        value: "image_processing_model.ipynb"
+        value: $(params.BUILDER_IMAGE)
+      - name: LOGLEVEL
+        value: '1'
+      - name : S2I_SOURCE_NOTEBOOK_LIST
+        value: $(params.S2I_SOURCE_NOTEBOOK_LIST)
     resources:
       inputs:
       - name: source
@@ -30,9 +42,13 @@ spec:
         resource: model-image
   - name: deploy-model
     taskRef:
-      name: openshift-client
-    runAfter:
-      - build-model
+      name: update-deployment
+    resources:
+      inputs:
+      - name: image
+        resource: model-image
     params:
-    - name: ARGS
-      value: "rollout latest bcd"
+    - name: deployment
+      value: $(params.deployment-name)
+    runAfter:
+    - build-model

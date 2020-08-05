@@ -9,8 +9,8 @@ spec:
         type: git
     params:
       - name: BUILDER_IMAGE
-        description: The location of s2i builder image
-        default: "quay.io/willbenton/simple-model-s2i:cached-pipeline-s2i"
+        description: The location of s2i base builder image
+        default: "quay.io/hanvithag/model-pipeline-s2i:latest"
       - name: PATH_CONTEXT
         description: The location of the path to run s2i from.
         default: .
@@ -19,7 +19,7 @@ spec:
         default: "true"
       - name: LOGLEVEL
         description: Log level when running S2I binary
-        default: '0'
+        default: '1'
       - name: S2I_SOURCE_NOTEBOOK_LIST
         description: "notebook names seperated by ,"
         default: "image_processing_model.ipynb"

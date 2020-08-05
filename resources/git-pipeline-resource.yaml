@@ -1,9 +1,9 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: bcd-model-git
+  name: model-git
   labels:
-    app: demo
+    app: cancerdetection
 spec:
   type: git
   params:

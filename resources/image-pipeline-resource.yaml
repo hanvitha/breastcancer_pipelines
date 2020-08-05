@@ -1,11 +1,11 @@
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: bcd-model-image
+  name: model-image
   labels:
-    app: demo
+    app: cancerdetection
 spec:
   type: image
   params:
   - name: url
-    value: image-registry.openshift-image-registry.svc:5000/demo/bcd
+    value: image-registry.openshift-image-registry.svc:5000/bcddemo/bcd:latest
