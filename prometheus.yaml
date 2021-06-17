@@ -20,9 +20,9 @@ scrape_configs:
     - targets: ['localhost:9090']
 
   # Scrape configuration for our bcd model
-  - job_name: 'breast-cancer-model'
+  - job_name: 'bcd-model'
     static_configs:
-    - targets: ['bcd:8080']
+    - targets: ['bcd.ai-ml-demo.svc.cluster.local']
     # Scrape configuration for our bcd model
 
   - job_name: 'breast-cancer-portal'
