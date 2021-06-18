@@ -1,54 +1,57 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: deploy-model-pipeline
-  labels:
-    app: cancerdetection
+  name: bcd
+  namespace: ai-ml-demo
 spec:
-  resources:
-  - name: model-git
-    type: git
-  - name: model-image
-    type: image
   params:
-  - name: deployment-name
-    type: string
-    description: name of the deployment to be patched
-  - name: S2I_SOURCE_NOTEBOOK_LIST
-    type: string
-    description: name of the deployment to be patched
-  - name: BUILDER_IMAGE
-    description: The location of s2i base builder image
-    type: string
+    - default: 'quay.io/hanvithag/model-pipeline-s2i:master'
+      name: BUILDER_IMAGE
+      type: string
+    - default: image_processing_model.ipynb
+      name: NOTEBOOK_LIST
+      type: string
+    - default: >-
+        image-registry.openshift-image-registry.svc:5000/ai-ml-demo/bcd:latest
+      name: MODEL_IMAGE
+      type: string
+  resources:
+    - name: bcd-source
+      type: git
+    - name: bcd-image
+      type: image
   tasks:
-  - name: build-model
-    taskRef:
-      name: simple-model-s2i
-    params:
-      - name: TLSVERIFY
-        value: "false"
-      - name: BUILDER_IMAGE
-        value: $(params.BUILDER_IMAGE)
-      - name: LOGLEVEL
-        value: '1'
-      - name : S2I_SOURCE_NOTEBOOK_LIST
-        value: $(params.S2I_SOURCE_NOTEBOOK_LIST)
-    resources:
-      inputs:
-      - name: source
-        resource: model-git
-      outputs:
-      - name: image
-        resource: model-image
-  - name: deploy-model
-    taskRef:
-      name: update-deployment
-    resources:
-      inputs:
-      - name: image
-        resource: model-image
-    params:
-    - name: deployment
-      value: $(params.deployment-name)
-    runAfter:
-    - build-model
+    - name: build-bcd-image
+      params:
+        - name: BUILDER_IMAGE
+          value: $(params.BUILDER_IMAGE)
+        - name: S2I_SOURCE_NOTEBOOK_LIST
+          value: $(params.NOTEBOOK_LIST)
+      resources:
+        inputs:
+          - name: source
+            resource: bcd-source
+        outputs:
+          - name: image
+            resource: bcd-image
+      taskRef:
+        kind: Task
+        name: simple-model-s2i
+    - name: deploy-bcd-kn-service
+      params:
+        - name: kn-image
+          value: 'registry.redhat.io/openshift-serverless-1/client-kn-rhel8:0.17.3'
+        - name: ARGS
+          value:
+            - service
+            - create
+            - bcd
+            - '--force'
+            - '--image=$(params.MODEL_IMAGE)'
+            - '--scale-min=1'
+            - '--cluster-local'
+      runAfter:
+        - build-bcd-image
+      taskRef:
+        kind: ClusterTask
+        name: kn

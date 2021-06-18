@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: build-source
+  namespace: ai-ml-demo
+spec:
+  params:
+    - name: url
+      value: 'https://github.com/hanvitha/breastcancer_detection.git'
+  type: git

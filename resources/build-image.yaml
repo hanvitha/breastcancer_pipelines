@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: build-image
+  namespace: ai-ml-demo
+spec:
+  params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/ai-ml-workflows/bcd:latest
+  type: image
