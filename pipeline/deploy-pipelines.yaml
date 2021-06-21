@@ -11,8 +11,7 @@ spec:
     - default: image_processing_model.ipynb
       name: NOTEBOOK_LIST
       type: string
-    - default: >-
-        image-registry.openshift-image-registry.svc:5000/ai-ml-demo/bcd:latest
+    - default: image-registry.openshift-image-registry.svc:5000/ai-ml-demo/bcd:latest
       name: MODEL_IMAGE
       type: string
   resources:

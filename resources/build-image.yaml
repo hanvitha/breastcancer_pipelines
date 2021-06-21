@@ -6,5 +6,5 @@ metadata:
 spec:
   params:
     - name: url
-      value: image-registry.openshift-image-registry.svc:5000/ai-ml-workflows/bcd:latest
+      value: image-registry.openshift-image-registry.svc:5000/ai-ml-demo/bcd:latest
   type: image
